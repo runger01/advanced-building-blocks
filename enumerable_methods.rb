@@ -2,7 +2,7 @@ module Enumerable
     def my_each
         i = 0
         while i < self.size
-            yield(self[i])
+            yield(self.to_a[i])
             i += 1
         end
         self
@@ -11,7 +11,7 @@ module Enumerable
     def my_each_with_index
         i = 0
         while i < self.size
-            yield(self[i], i)
+            yield(self.to_a[i], i)
             i += 1
         end
         self
@@ -56,7 +56,7 @@ module Enumerable
         result
     end
 
-    def my_count(input = 0)
+    def my_count(input = nil)
         count = 0
         if block_given?
             self.my_select {|value| count += 1 if yield(value)}
@@ -76,8 +76,10 @@ module Enumerable
         result
     end
 
-    def my_inject
-
+    def my_inject(memo = nil)
+        memo = memo ? memo : 0
+        self.my_each {|value| memo = yield(memo, value)}
+        memo
     end
 end
 
@@ -132,3 +134,8 @@ puts "*** my_map ***"
 test_seven = [1, 2, 3, 4, 5, 6]
 p test_seven.my_map {|num| num ** 2}
 p test_seven.my_map
+
+puts ""
+puts "*** my_inject ***"
+p (5..10).my_inject {|memo, num| memo + num}
+p (5..10).my_inject(1) {|memo, num| memo * num}
